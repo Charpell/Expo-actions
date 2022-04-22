@@ -1,17 +1,28 @@
-name: Run Test
 on:
   push:
-    branches: [staging]
+    branches:
+      - main
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@master
-      - uses: c-hive/gha-yarn-cache@v1
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v2
 
-      - name: Install dependencies
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+
+      - name: 🏗 Setup Expo
+        uses: expo/expo-github-action@v7
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
         run: yarn install
 
-      - name: Running Test
-        run: yarn test
+      - name: 🚀 Publish app
+        run: expo publish --non-interactive
